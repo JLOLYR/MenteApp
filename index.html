@@ -22,10 +22,11 @@
             --accent: #d4af37;    /* Dorado fuerte */
             --accent-hover: #b5952f;
             
-            /* Nuevo color para el botón LOSS (Verde Bosque/Esmeralda) */
+            /* Color para el botón LOSS (Verde Bosque/Esmeralda) */
             --loss-bg: #2d6a4f;
             --loss-shadow: rgba(45, 106, 79, 0.6);
             --success: #27ae60;
+            --danger: #e74c3c;
         }
 
         body {
@@ -33,10 +34,11 @@
             background: var(--bg-gradient);
             color: var(--text-main);
             margin: 0;
-            padding: 15px;
+            padding: 0;
             display: flex;
             justify-content: center;
-            align-items: flex-start;
+            /* Cambiado a center para que todo quede en medio en celulares */
+            align-items: center; 
             min-height: 100vh;
             text-align: center;
         }
@@ -44,7 +46,9 @@
         .app-container {
             width: 100%;
             max-width: 450px;
-            padding-bottom: 30px;
+            padding: 20px 15px;
+            margin: auto; /* Asegura el centrado en pantallas grandes */
+            box-sizing: border-box;
         }
 
         /* Vistas */
@@ -60,11 +64,11 @@
             margin-bottom: 10px;
             filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.3));
         }
-        h1 { font-size: 22px; color: var(--accent); font-weight: 600; letter-spacing: 1px; margin-bottom: 5px; }
+        h1 { font-size: 24px; color: var(--accent); font-weight: 600; letter-spacing: 1px; margin-bottom: 5px; }
         h2 { font-size: 18px; color: var(--accent); margin-bottom: 15px; border-bottom: 1px solid var(--accent); padding-bottom: 5px;}
-        p { font-size: 14px; opacity: 0.9; margin-bottom: 20px;}
+        p { font-size: 14px; opacity: 0.9; margin-bottom: 25px; line-height: 1.4;}
 
-        /* Botones del Menú Principal (1 columna, más elegantes) */
+        /* Botones del Menú Principal */
         .menu-list {
             display: flex;
             flex-direction: column;
@@ -103,8 +107,14 @@
             font-weight: bold;
         }
         .btn-full.primary { background: var(--accent); color: #0d1b2a; }
+        
+        .btn-danger {
+            border-color: rgba(231, 76, 60, 0.5);
+            color: var(--danger);
+            background: rgba(231, 76, 60, 0.05);
+        }
 
-        /* NUEVO BOTÓN LOSS (Verde calmante) */
+        /* BOTÓN LOSS */
         .btn-loss { 
             background-color: var(--loss-bg); 
             border: 2px solid var(--accent);
@@ -113,9 +123,9 @@
             font-weight: bold; 
             padding: 40px; 
             border-radius: 50%;
-            margin: 30px auto;
-            width: 150px;
-            height: 150px;
+            margin: 30px auto 40px auto; /* Más margen abajo para separar del botón terminar */
+            width: 160px;
+            height: 160px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -167,9 +177,9 @@
         </div>
     </div>
 
-    <!-- 2. HUB DEL EJERCICIO (Perfil individual) -->
+    <!-- 2. HUB DEL EJERCICIO -->
     <div id="view-hub" class="view">
-        <img src="ojo-de-ra.png" alt="Ojo de Ra" class="logo-img" style="width: 50px; height: 50px;">
+        <img src="ojo-de-ra.png" alt="Ojo de Ra" class="logo-img" style="width: 60px; height: 60px;">
         <h1 id="hub-title">Nombre Ejercicio</h1>
         <p id="hub-desc">Descripción del ejercicio.</p>
 
@@ -191,14 +201,14 @@
     <!-- 4. PANTALLA DE EJERCICIO -->
     <div id="view-exercise" class="view">
         <h2 id="ex-title">Ejercicio</h2>
-        <p>Meta: 10 Minutos Continuos.</p>
+        <p style="margin-bottom: 5px;">Meta: 10 Minutos Continuos.</p>
         
         <div class="shape-container"><div id="ex-shape" class="shape"></div></div>
 
         <div class="timer" id="main-timer">00:00</div>
         <div class="total-timer" id="total-timer">Total: 00:00</div>
 
-        <div id="controls-start">
+        <div id="controls-start" style="margin-top: 30px;">
             <button class="btn-full primary" onclick="arrancarCronometro()">COMENZAR CRONÓMETRO</button>
             <button class="btn-full" onclick="cambiarVista('view-hub')" style="border-color: #555; color: #aaa;">Cancelar</button>
         </div>
@@ -213,10 +223,10 @@
     <div id="view-summary" class="view">
         <h2>Resumen de Sesión</h2>
         <div id="summary-content" class="history-card"></div>
-        <button class="btn-full primary" onclick="abrirHub(tipoActual)">Volver al Ejercicio</button>
+        <button class="btn-full primary" onclick="abrirHub(tipoActual)" style="margin-top: 20px;">Volver al Ejercicio</button>
     </div>
 
-    <!-- 6. HISTORIAL Y GRÁFICOS (Por Ejercicio) -->
+    <!-- 6. HISTORIAL Y GRÁFICOS -->
     <div id="view-history" class="view">
         <h2 id="history-title">Progreso</h2>
         
@@ -234,9 +244,12 @@
 
         <!-- Historial Reciente -->
         <h2 style="margin-top:25px; font-size: 16px;">📅 Sesiones Recientes</h2>
-        <div id="history-list" style="max-height: 250px; overflow-y: auto;"></div>
+        <div id="history-list" style="max-height: 250px; overflow-y: auto; margin-bottom: 20px;"></div>
         
-        <button class="btn-full" onclick="abrirHub(tipoActual)" style="margin-top: 20px;">Volver al Ejercicio</button>
+        <!-- Botones de Control -->
+        <button class="btn-full" onclick="abrirHub(tipoActual)">Volver al Ejercicio</button>
+        <!-- BOTÓN DE BORRAR REGISTROS -->
+        <button class="btn-full btn-danger" onclick="borrarRegistros()">🗑️ Reiniciar Historial</button>
     </div>
 
 </div>
@@ -249,7 +262,7 @@
         });
     }
 
-    // --- VARIABLES Y CONFIGURACIÓN ---
+    // --- VARIABLES ---
     const infoEjercicios = {
         'observador': { title: 'El Observador', desc: 'Siéntate cómodo. Cierra los ojos. Deja pasar tus pensamientos como vehículos en una carretera. No te involucres en su historia.' },
         'visualizacion': { title: 'Visualización', desc: 'Mantén la mirada y atención fijas en la figura geométrica en pantalla sin distraerte.' },
@@ -262,9 +275,8 @@
     let segTotalesVacio = 0;
     let registroLoss = [];
     let vacioSegmentos = [];
-    let metaSegundos = 600; // 10 Minutos
+    let metaSegundos = 600; 
     let fechaInicioObj = null;
-    
     let rachaChartInstance = null;
     let lossChartInstance = null;
 
@@ -280,7 +292,7 @@
         return `${m}:${s}`;
     }
 
-    // --- FLUJO DE NAVEGACIÓN ---
+    // --- FLUJO ---
     function abrirHub(tipo) {
         tipoActual = tipo;
         document.getElementById('hub-title').innerText = infoEjercicios[tipo].title;
@@ -293,7 +305,6 @@
         else iniciarEjercicio(null);
     }
 
-    // --- LÓGICA DE EJERCICIO ---
     function iniciarEjercicio(figura) {
         segTranscurridos = 0; segTotalesVacio = 0;
         registroLoss = []; vacioSegmentos = [];
@@ -400,14 +411,11 @@
     // --- HISTORIAL Y GRÁFICOS ---
     function mostrarHistorial() {
         document.getElementById('history-title').innerText = "Progreso: " + infoEjercicios[tipoActual].title;
-        
         let historialGlobal = JSON.parse(localStorage.getItem('mindfulness_data') || '[]');
-        // Filtrar SOLO el ejercicio actual
         let datosEjercicio = historialGlobal.filter(h => h.tipo === tipoActual);
         
         dibujarGraficos(datosEjercicio);
         generarListas(datosEjercicio);
-        
         cambiarVista('view-history');
     }
 
@@ -421,7 +429,6 @@
             return;
         }
 
-        // 1. Generar Ranking (Top 3 de Rachas Más Largas)
         let ranking = [...datos].sort((a, b) => b.rachaMaxima - a.rachaMaxima).slice(0, 3);
         contenedorRanking.innerHTML = ranking.map((reg, index) => `
             <div class="history-card" style="border-color: var(--success);">
@@ -430,8 +437,7 @@
             </div>
         `).join('');
 
-        // 2. Generar Historial Cronológico (Últimas sesiones)
-        let recientes = [...datos].sort((a, b) => b.timestamp - a.timestamp); // Más recientes primero
+        let recientes = [...datos].sort((a, b) => b.timestamp - a.timestamp);
         contenedorRecientes.innerHTML = recientes.map(reg => `
             <div class="history-card">
                 <h4>${reg.fecha} - ${reg.horaInicio} ${reg.exito ? '🏆' : ''}</h4>
@@ -446,50 +452,42 @@
 
         if (datos.length === 0) return;
 
-        // Limitar a las últimas 15 sesiones cronológicas para el gráfico
         let datosGrafico = [...datos].sort((a,b) => a.timestamp - b.timestamp).slice(-15);
-        let labels = datosGrafico.map(h => h.fecha.substring(0,5)); // Ej: 14/10
-        let rachaData = datosGrafico.map(h => (h.rachaMaxima / 60).toFixed(2)); // En Minutos
+        let labels = datosGrafico.map(h => h.fecha.substring(0,5));
+        let rachaData = datosGrafico.map(h => (h.rachaMaxima / 60).toFixed(2));
         let lossData = datosGrafico.map(h => h.cantidadLoss);
 
         Chart.defaults.color = '#e8d5a5';
         Chart.defaults.borderColor = 'rgba(212, 175, 55, 0.2)';
 
-        // Gráfico de Rachas
         let ctxRacha = document.getElementById('chartRacha').getContext('2d');
         rachaChartInstance = new Chart(ctxRacha, {
             type: 'line',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: 'Racha Max por sesión (Minutos)',
-                    data: rachaData,
-                    borderColor: '#d4af37',
-                    backgroundColor: 'rgba(212, 175, 55, 0.2)',
-                    fill: true,
-                    tension: 0.3,
-                    pointBackgroundColor: '#d4af37'
-                }]
-            },
+            data: { labels: labels, datasets: [{ label: 'Racha Max por sesión (Min)', data: rachaData, borderColor: '#d4af37', backgroundColor: 'rgba(212, 175, 55, 0.2)', fill: true, tension: 0.3, pointBackgroundColor: '#d4af37' }] },
             options: { responsive: true, plugins: { legend: { display: true } } }
         });
 
-        // Gráfico de Losses
         let ctxLoss = document.getElementById('chartLoss').getContext('2d');
         lossChartInstance = new Chart(ctxLoss, {
             type: 'bar',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: 'Cantidad de "Loss" por Sesión',
-                    data: lossData,
-                    backgroundColor: '#2d6a4f', /* Ahora las barras de loss también son verdes */
-                    borderColor: '#d4af37',
-                    borderWidth: 1
-                }]
-            },
+            data: { labels: labels, datasets: [{ label: 'Cantidad de "Loss" por Sesión', data: lossData, backgroundColor: '#2d6a4f', borderColor: '#d4af37', borderWidth: 1 }] },
             options: { responsive: true, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } }
         });
+    }
+
+    // --- BORRAR REGISTROS ---
+    function borrarRegistros() {
+        let nombreEjercicio = infoEjercicios[tipoActual].title;
+        if (confirm(`¿Estás seguro de que quieres borrar TODOS tus progresos de "${nombreEjercicio}"?\n\nEsta acción no se puede deshacer.`)) {
+            let historialGlobal = JSON.parse(localStorage.getItem('mindfulness_data') || '[]');
+            // Filtramos para mantener solo los ejercicios que NO sean el actual
+            let historialLimpio = historialGlobal.filter(h => h.tipo !== tipoActual);
+            
+            localStorage.setItem('mindfulness_data', JSON.stringify(historialLimpio));
+            
+            // Recargamos la vista de historial para que se muestre vacía
+            mostrarHistorial();
+        }
     }
 </script>
 
