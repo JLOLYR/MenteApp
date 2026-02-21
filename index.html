@@ -37,7 +37,6 @@
             padding: 0;
             display: flex;
             justify-content: center;
-            /* Cambiado a center para que todo quede en medio en celulares */
             align-items: center; 
             min-height: 100vh;
             text-align: center;
@@ -47,7 +46,7 @@
             width: 100%;
             max-width: 450px;
             padding: 20px 15px;
-            margin: auto; /* Asegura el centrado en pantallas grandes */
+            margin: auto;
             box-sizing: border-box;
         }
 
@@ -123,7 +122,7 @@
             font-weight: bold; 
             padding: 40px; 
             border-radius: 50%;
-            margin: 30px auto 40px auto; /* Más margen abajo para separar del botón terminar */
+            margin: 30px auto 40px auto; 
             width: 160px;
             height: 160px;
             display: flex;
@@ -279,6 +278,9 @@
     let fechaInicioObj = null;
     let rachaChartInstance = null;
     let lossChartInstance = null;
+    
+    // Variable para controlar la pantalla encendida
+    let wakeLock = null;
 
     // --- UTILIDADES ---
     function cambiarVista(idVista) {
@@ -291,6 +293,34 @@
         let s = (segundos % 60).toString().padStart(2, '0');
         return `${m}:${s}`;
     }
+
+    // --- FUNCIONES WAKE LOCK (Mantener pantalla encendida) ---
+    async function solicitarWakeLock() {
+        try {
+            if ('wakeLock' in navigator) {
+                wakeLock = await navigator.wakeLock.request('screen');
+                console.log('Pantalla mantenida encendida.');
+            }
+        } catch (err) {
+            console.warn(`Error WakeLock: ${err.name}, ${err.message}`);
+        }
+    }
+
+    async function liberarWakeLock() {
+        if (wakeLock !== null) {
+            await wakeLock.release();
+            wakeLock = null;
+            console.log('Pantalla liberada.');
+        }
+    }
+
+    // Si el usuario cambia de app temporalmente y vuelve, el celular quita el WakeLock por seguridad. 
+    // Este código lo vuelve a pedir si el ejercicio sigue activo.
+    document.addEventListener('visibilitychange', async () => {
+        if (wakeLock !== null && document.visibilityState === 'visible') {
+            solicitarWakeLock();
+        }
+    });
 
     // --- FLUJO ---
     function abrirHub(tipo) {
@@ -309,6 +339,7 @@
         segTranscurridos = 0; segTotalesVacio = 0;
         registroLoss = []; vacioSegmentos = [];
         clearInterval(temporizador);
+        liberarWakeLock(); // Por si acaso aseguramos que esté apagado antes de iniciar
 
         document.getElementById('ex-title').innerText = infoEjercicios[tipoActual].title;
         
@@ -334,6 +365,9 @@
         document.getElementById('controls-active').style.display = 'block';
         fechaInicioObj = new Date();
 
+        // Solicitar que la pantalla NO se apague
+        solicitarWakeLock();
+
         temporizador = setInterval(() => {
             segTranscurridos++;
             if (tipoActual === 'vacio') {
@@ -357,6 +391,10 @@
 
     function finalizarEjercicio(metaAlcanzada) {
         clearInterval(temporizador);
+        
+        // El ejercicio terminó, permitimos que la pantalla vuelva a apagarse normalmente
+        liberarWakeLock();
+
         let intervalos = [], rachaMasLarga = 0;
 
         if (tipoActual === 'vacio') {
@@ -480,12 +518,10 @@
         let nombreEjercicio = infoEjercicios[tipoActual].title;
         if (confirm(`¿Estás seguro de que quieres borrar TODOS tus progresos de "${nombreEjercicio}"?\n\nEsta acción no se puede deshacer.`)) {
             let historialGlobal = JSON.parse(localStorage.getItem('mindfulness_data') || '[]');
-            // Filtramos para mantener solo los ejercicios que NO sean el actual
             let historialLimpio = historialGlobal.filter(h => h.tipo !== tipoActual);
             
             localStorage.setItem('mindfulness_data', JSON.stringify(historialLimpio));
             
-            // Recargamos la vista de historial para que se muestre vacía
             mostrarHistorial();
         }
     }
