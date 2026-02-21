@@ -1,0 +1,22 @@
+{
+  "name": "Mindfulness Tracker",
+  "short_name": "Mindfulness",
+  "description": "App para registrar progreso de ejercicios de observador y vacío mental.",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#0d1b2a",
+  "theme_color": "#0d1b2a",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "ojo-de-ra.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "ojo-de-ra.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
