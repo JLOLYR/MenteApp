@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#0d1b2a">
+    <title>Mindfulness Tracker</title>
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="ojo-de-ra.png">
+
+    <!-- Librería para Gráficos -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        /* --- PALETA DE COLORES --- */
+        :root {
+            --bg-gradient: radial-gradient(circle at top right, #1b3a4b, #0d1b2a, #050b14);
+            --card-bg: #132435;
+            --text-main: #e8d5a5; /* Dorado suave */
+            --accent: #d4af37;    /* Dorado fuerte */
+            --accent-hover: #b5952f;
+            
+            /* Nuevo color para el botón LOSS (Verde Bosque/Esmeralda) */
+            --loss-bg: #2d6a4f;
+            --loss-shadow: rgba(45, 106, 79, 0.6);
+            --success: #27ae60;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-gradient);
+            color: var(--text-main);
+            margin: 0;
+            padding: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            text-align: center;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 450px;
+            padding-bottom: 30px;
+        }
+
+        /* Vistas */
+        .view { display: none; animation: fadeIn 0.4s ease-in-out; }
+        .view.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Logo y Encabezados */
+        .logo-img {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+            margin-bottom: 10px;
+            filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.3));
+        }
+        h1 { font-size: 22px; color: var(--accent); font-weight: 600; letter-spacing: 1px; margin-bottom: 5px; }
+        h2 { font-size: 18px; color: var(--accent); margin-bottom: 15px; border-bottom: 1px solid var(--accent); padding-bottom: 5px;}
+        p { font-size: 14px; opacity: 0.9; margin-bottom: 20px;}
+
+        /* Botones del Menú Principal (1 columna, más elegantes) */
+        .menu-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        .btn-menu {
+            background: var(--card-bg);
+            border: 1px solid rgba(212, 175, 55, 0.4);
+            border-radius: 16px;
+            padding: 20px;
+            color: var(--accent);
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            transition: all 0.3s;
+        }
+        .btn-menu i { font-size: 30px; margin-right: 15px; font-style: normal; }
+        .btn-menu:hover, .btn-menu:active { background: rgba(212, 175, 55, 0.1); border-color: var(--accent); }
+
+        .btn-full {
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 15px;
+            border: 1px solid var(--accent);
+            border-radius: 12px;
+            background: var(--card-bg);
+            color: var(--accent);
+            font-size: 16px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .btn-full.primary { background: var(--accent); color: #0d1b2a; }
+
+        /* NUEVO BOTÓN LOSS (Verde calmante) */
+        .btn-loss { 
+            background-color: var(--loss-bg); 
+            border: 2px solid var(--accent);
+            color: var(--text-main);
+            font-size: 24px; 
+            font-weight: bold; 
+            padding: 40px; 
+            border-radius: 50%;
+            margin: 30px auto;
+            width: 150px;
+            height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 20px var(--loss-shadow);
+            transition: transform 0.1s;
+        }
+        .btn-loss:active { transform: scale(0.95); }
+
+        /* Figuras para Visualización */
+        .shape-container { display: flex; justify-content: center; margin: 30px 0; }
+        .shape { width: 120px; height: 120px; display: none; }
+        .shape.star { background: var(--accent); clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%); }
+        .shape.circle { background: #e74c3c; border-radius: 50%; }
+        .shape.triangle { background: #3498db; clip-path: polygon(50% 0%, 0% 100%, 100% 100%); }
+
+        /* Cronómetro */
+        .timer { font-size: 70px; font-weight: 300; font-variant-numeric: tabular-nums; margin: 10px 0; color: var(--accent); text-shadow: 0 0 10px rgba(212, 175, 55, 0.3); }
+        .total-timer { font-size: 16px; color: #a0b2c6; margin-bottom: 20px; display: none; }
+
+        /* Contenedor de Gráficos y Tarjetas */
+        .chart-container { background: var(--card-bg); border: 1px solid rgba(212,175,55,0.2); border-radius: 12px; padding: 10px; margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
+        
+        .history-card { border: 1px solid rgba(212,175,55,0.3); padding: 15px; border-radius: 12px; margin-bottom: 12px; background: var(--card-bg); text-align: left; }
+        .history-card h4 { margin: 0 0 8px 0; color: var(--accent); display: flex; justify-content: space-between;}
+        
+        .ranking-badge { background: var(--accent); color: #0d1b2a; padding: 2px 8px; border-radius: 10px; font-size: 12px; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    
+    <!-- 1. MENÚ PRINCIPAL -->
+    <div id="view-menu" class="view active">
+        <img src="ojo-de-ra.png" alt="Ojo de Ra" class="logo-img">
+        <h1>Mente Consciente</h1>
+        <p>Selecciona la disciplina a practicar</p>
+        
+        <div class="menu-list">
+            <button class="btn-menu" onclick="abrirHub('observador')">
+                <i>👁️</i> El Observador
+            </button>
+            <button class="btn-menu" onclick="abrirHub('visualizacion')">
+                <i>🔺</i> Visualización
+            </button>
+            <button class="btn-menu" onclick="abrirHub('vacio')">
+                <i>🌌</i> Vacío Mental
+            </button>
+        </div>
+    </div>
+
+    <!-- 2. HUB DEL EJERCICIO (Perfil individual) -->
+    <div id="view-hub" class="view">
+        <img src="ojo-de-ra.png" alt="Ojo de Ra" class="logo-img" style="width: 50px; height: 50px;">
+        <h1 id="hub-title">Nombre Ejercicio</h1>
+        <p id="hub-desc">Descripción del ejercicio.</p>
+
+        <button class="btn-full primary" onclick="prepararEjercicio()">INICIAR PRÁCTICA</button>
+        <button class="btn-full" onclick="mostrarHistorial()">📊 VER PROGRESO</button>
+        <button class="btn-full" onclick="cambiarVista('view-menu')" style="border-color: #555; color: #aaa; margin-top: 20px;">Volver al Menú</button>
+    </div>
+
+    <!-- 3. SETUP VISUALIZACIÓN -->
+    <div id="view-setup-vis" class="view">
+        <h2>Visualización</h2>
+        <p>Elige el objeto de tu enfoque:</p>
+        <button class="btn-full" onclick="iniciarEjercicio('star')">⭐ Estrella Amarilla</button>
+        <button class="btn-full" onclick="iniciarEjercicio('circle')">🔴 Círculo Rojo</button>
+        <button class="btn-full" onclick="iniciarEjercicio('triangle')">🔵 Triángulo Azul</button>
+        <button class="btn-full" onclick="cambiarVista('view-hub')" style="margin-top: 30px; border-color: #555; color: #aaa;">Cancelar</button>
+    </div>
+
+    <!-- 4. PANTALLA DE EJERCICIO -->
+    <div id="view-exercise" class="view">
+        <h2 id="ex-title">Ejercicio</h2>
+        <p>Meta: 10 Minutos Continuos.</p>
+        
+        <div class="shape-container"><div id="ex-shape" class="shape"></div></div>
+
+        <div class="timer" id="main-timer">00:00</div>
+        <div class="total-timer" id="total-timer">Total: 00:00</div>
+
+        <div id="controls-start">
+            <button class="btn-full primary" onclick="arrancarCronometro()">COMENZAR CRONÓMETRO</button>
+            <button class="btn-full" onclick="cambiarVista('view-hub')" style="border-color: #555; color: #aaa;">Cancelar</button>
+        </div>
+
+        <div id="controls-active" style="display: none;">
+            <button class="btn-loss" onclick="registrarLoss()">LOSS</button>
+            <button class="btn-full" onclick="finalizarEjercicio(false)" style="border-color: #555; color: #aaa;">Terminar Sesión</button>
+        </div>
+    </div>
+
+    <!-- 5. RESUMEN DE SESIÓN -->
+    <div id="view-summary" class="view">
+        <h2>Resumen de Sesión</h2>
+        <div id="summary-content" class="history-card"></div>
+        <button class="btn-full primary" onclick="abrirHub(tipoActual)">Volver al Ejercicio</button>
+    </div>
+
+    <!-- 6. HISTORIAL Y GRÁFICOS (Por Ejercicio) -->
+    <div id="view-history" class="view">
+        <h2 id="history-title">Progreso</h2>
+        
+        <!-- Gráficos -->
+        <div class="chart-container">
+            <canvas id="chartRacha"></canvas>
+        </div>
+        <div class="chart-container">
+            <canvas id="chartLoss"></canvas>
+        </div>
+
+        <!-- Ranking Top Rachas -->
+        <h2 style="margin-top:25px; font-size: 16px;">🏆 Top Mejores Sesiones</h2>
+        <div id="ranking-list"></div>
+
+        <!-- Historial Reciente -->
+        <h2 style="margin-top:25px; font-size: 16px;">📅 Sesiones Recientes</h2>
+        <div id="history-list" style="max-height: 250px; overflow-y: auto;"></div>
+        
+        <button class="btn-full" onclick="abrirHub(tipoActual)" style="margin-top: 20px;">Volver al Ejercicio</button>
+    </div>
+
+</div>
+
+<script>
+    // Registro PWA
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('sw.js').catch(err => console.warn(err));
+        });
+    }
+
+    // --- VARIABLES Y CONFIGURACIÓN ---
+    const infoEjercicios = {
+        'observador': { title: 'El Observador', desc: 'Siéntate cómodo. Cierra los ojos. Deja pasar tus pensamientos como vehículos en una carretera. No te involucres en su historia.' },
+        'visualizacion': { title: 'Visualización', desc: 'Mantén la mirada y atención fijas en la figura geométrica en pantalla sin distraerte.' },
+        'vacio': { title: 'Vacío Mental', desc: 'Mantén la mente en blanco total. Al presionar LOSS, tu racha actual se guardará y el cronómetro volverá a cero.' }
+    };
+
+    let tipoActual = '';
+    let temporizador = null;
+    let segTranscurridos = 0;
+    let segTotalesVacio = 0;
+    let registroLoss = [];
+    let vacioSegmentos = [];
+    let metaSegundos = 600; // 10 Minutos
+    let fechaInicioObj = null;
+    
+    let rachaChartInstance = null;
+    let lossChartInstance = null;
+
+    // --- UTILIDADES ---
+    function cambiarVista(idVista) {
+        document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+        document.getElementById(idVista).classList.add('active');
+    }
+
+    function formatoTiempo(segundos) {
+        let m = Math.floor(segundos / 60).toString().padStart(2, '0');
+        let s = (segundos % 60).toString().padStart(2, '0');
+        return `${m}:${s}`;
+    }
+
+    // --- FLUJO DE NAVEGACIÓN ---
+    function abrirHub(tipo) {
+        tipoActual = tipo;
+        document.getElementById('hub-title').innerText = infoEjercicios[tipo].title;
+        document.getElementById('hub-desc').innerText = infoEjercicios[tipo].desc;
+        cambiarVista('view-hub');
+    }
+
+    function prepararEjercicio() {
+        if (tipoActual === 'visualizacion') cambiarVista('view-setup-vis');
+        else iniciarEjercicio(null);
+    }
+
+    // --- LÓGICA DE EJERCICIO ---
+    function iniciarEjercicio(figura) {
+        segTranscurridos = 0; segTotalesVacio = 0;
+        registroLoss = []; vacioSegmentos = [];
+        clearInterval(temporizador);
+
+        document.getElementById('ex-title').innerText = infoEjercicios[tipoActual].title;
+        
+        let shapeDiv = document.getElementById('ex-shape');
+        shapeDiv.className = 'shape';
+        shapeDiv.style.display = 'none';
+        if (tipoActual === 'visualizacion' && figura) { shapeDiv.classList.add(figura); shapeDiv.style.display = 'block'; }
+
+        document.getElementById('main-timer').innerText = "00:00";
+        let totalTimerUI = document.getElementById('total-timer');
+        if (tipoActual === 'vacio') {
+            totalTimerUI.style.display = 'block';
+            totalTimerUI.innerText = "Tiempo Invertido: 00:00";
+        } else totalTimerUI.style.display = 'none';
+
+        document.getElementById('controls-start').style.display = 'block';
+        document.getElementById('controls-active').style.display = 'none';
+        cambiarVista('view-exercise');
+    }
+
+    function arrancarCronometro() {
+        document.getElementById('controls-start').style.display = 'none';
+        document.getElementById('controls-active').style.display = 'block';
+        fechaInicioObj = new Date();
+
+        temporizador = setInterval(() => {
+            segTranscurridos++;
+            if (tipoActual === 'vacio') {
+                segTotalesVacio++;
+                document.getElementById('total-timer').innerText = "Tiempo Invertido: " + formatoTiempo(segTotalesVacio);
+            }
+            document.getElementById('main-timer').innerText = formatoTiempo(segTranscurridos);
+            if (segTranscurridos >= metaSegundos) finalizarEjercicio(true);
+        }, 1000);
+    }
+
+    function registrarLoss() {
+        if (tipoActual === 'vacio') {
+            vacioSegmentos.push(segTranscurridos);
+            segTranscurridos = 0;
+            document.getElementById('main-timer').innerText = "00:00";
+        } else {
+            registroLoss.push(segTranscurridos);
+        }
+    }
+
+    function finalizarEjercicio(metaAlcanzada) {
+        clearInterval(temporizador);
+        let intervalos = [], rachaMasLarga = 0;
+
+        if (tipoActual === 'vacio') {
+            if (segTranscurridos > 0 || metaAlcanzada) vacioSegmentos.push(segTranscurridos);
+            intervalos = vacioSegmentos;
+            rachaMasLarga = intervalos.length > 0 ? Math.max(...intervalos) : 0;
+        } else {
+            let puntoAnterior = 0;
+            for (let i = 0; i < registroLoss.length; i++) {
+                intervalos.push(registroLoss[i] - puntoAnterior);
+                puntoAnterior = registroLoss[i];
+            }
+            intervalos.push(segTranscurridos - puntoAnterior);
+            rachaMasLarga = intervalos.length > 0 ? Math.max(...intervalos) : 0;
+        }
+
+        let duracionTotalCalculada = (tipoActual === 'vacio') ? segTotalesVacio : segTranscurridos;
+        let vecesLoss = (tipoActual === 'vacio') ? (vacioSegmentos.length - 1) : registroLoss.length;
+        if (vecesLoss < 0) vecesLoss = 0;
+        let logroExitoso = (metaAlcanzada && vecesLoss === 0) || (tipoActual === 'vacio' && metaAlcanzada);
+
+        let registro = {
+            tipo: tipoActual,
+            fecha: fechaInicioObj.toLocaleDateString(),
+            horaInicio: fechaInicioObj.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
+            duracionTotal: duracionTotalCalculada,
+            cantidadLoss: vecesLoss,
+            rachaMaxima: rachaMasLarga,
+            exito: logroExitoso,
+            timestamp: fechaInicioObj.getTime()
+        };
+
+        let historial = JSON.parse(localStorage.getItem('mindfulness_data') || '[]');
+        historial.push(registro);
+        localStorage.setItem('mindfulness_data', JSON.stringify(historial));
+
+        mostrarResumen(registro);
+    }
+
+    function mostrarResumen(registro) {
+        let exitoHtml = registro.exito ? `<h3 style="color:var(--success)">🏆 ¡Meta Cumplida! 10 Minutos.</h3>` : `<h3>Sesión Terminada</h3>`;
+        document.getElementById('summary-content').innerHTML = `
+            ${exitoHtml}
+            <p><strong>Día:</strong> ${registro.fecha} a las ${registro.horaInicio}</p>
+            <p><strong>Duración Total:</strong> ${formatoTiempo(registro.duracionTotal)}</p>
+            <p><strong>Veces Loss:</strong> ${registro.cantidadLoss}</p>
+            <p><strong>Mejor Racha de la sesión:</strong> <span style="color:var(--accent)">${formatoTiempo(registro.rachaMaxima)}</span></p>
+        `;
+        cambiarVista('view-summary');
+    }
+
+    // --- HISTORIAL Y GRÁFICOS ---
+    function mostrarHistorial() {
+        document.getElementById('history-title').innerText = "Progreso: " + infoEjercicios[tipoActual].title;
+        
+        let historialGlobal = JSON.parse(localStorage.getItem('mindfulness_data') || '[]');
+        // Filtrar SOLO el ejercicio actual
+        let datosEjercicio = historialGlobal.filter(h => h.tipo === tipoActual);
+        
+        dibujarGraficos(datosEjercicio);
+        generarListas(datosEjercicio);
+        
+        cambiarVista('view-history');
+    }
+
+    function generarListas(datos) {
+        let contenedorRanking = document.getElementById('ranking-list');
+        let contenedorRecientes = document.getElementById('history-list');
+
+        if (datos.length === 0) {
+            contenedorRanking.innerHTML = "<p>Sin datos aún.</p>";
+            contenedorRecientes.innerHTML = "<p>No hay sesiones registradas.</p>";
+            return;
+        }
+
+        // 1. Generar Ranking (Top 3 de Rachas Más Largas)
+        let ranking = [...datos].sort((a, b) => b.rachaMaxima - a.rachaMaxima).slice(0, 3);
+        contenedorRanking.innerHTML = ranking.map((reg, index) => `
+            <div class="history-card" style="border-color: var(--success);">
+                <h4><span>#${index + 1} Racha: ${formatoTiempo(reg.rachaMaxima)}</span> <span class="ranking-badge">${reg.exito ? '🏆 Éxito' : ''}</span></h4>
+                <p style="font-size:13px; color:#ccc;">Logrado el: ${reg.fecha} (${reg.horaInicio})</p>
+            </div>
+        `).join('');
+
+        // 2. Generar Historial Cronológico (Últimas sesiones)
+        let recientes = [...datos].sort((a, b) => b.timestamp - a.timestamp); // Más recientes primero
+        contenedorRecientes.innerHTML = recientes.map(reg => `
+            <div class="history-card">
+                <h4>${reg.fecha} - ${reg.horaInicio} ${reg.exito ? '🏆' : ''}</h4>
+                <p>Losses: ${reg.cantidadLoss} | Racha Sesión: ${formatoTiempo(reg.rachaMaxima)}</p>
+            </div>
+        `).join('');
+    }
+
+    function dibujarGraficos(datos) {
+        if(rachaChartInstance) rachaChartInstance.destroy();
+        if(lossChartInstance) lossChartInstance.destroy();
+
+        if (datos.length === 0) return;
+
+        // Limitar a las últimas 15 sesiones cronológicas para el gráfico
+        let datosGrafico = [...datos].sort((a,b) => a.timestamp - b.timestamp).slice(-15);
+        let labels = datosGrafico.map(h => h.fecha.substring(0,5)); // Ej: 14/10
+        let rachaData = datosGrafico.map(h => (h.rachaMaxima / 60).toFixed(2)); // En Minutos
+        let lossData = datosGrafico.map(h => h.cantidadLoss);
+
+        Chart.defaults.color = '#e8d5a5';
+        Chart.defaults.borderColor = 'rgba(212, 175, 55, 0.2)';
+
+        // Gráfico de Rachas
+        let ctxRacha = document.getElementById('chartRacha').getContext('2d');
+        rachaChartInstance = new Chart(ctxRacha, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Racha Max por sesión (Minutos)',
+                    data: rachaData,
+                    borderColor: '#d4af37',
+                    backgroundColor: 'rgba(212, 175, 55, 0.2)',
+                    fill: true,
+                    tension: 0.3,
+                    pointBackgroundColor: '#d4af37'
+                }]
+            },
+            options: { responsive: true, plugins: { legend: { display: true } } }
+        });
+
+        // Gráfico de Losses
+        let ctxLoss = document.getElementById('chartLoss').getContext('2d');
+        lossChartInstance = new Chart(ctxLoss, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Cantidad de "Loss" por Sesión',
+                    data: lossData,
+                    backgroundColor: '#2d6a4f', /* Ahora las barras de loss también son verdes */
+                    borderColor: '#d4af37',
+                    borderWidth: 1
+                }]
+            },
+            options: { responsive: true, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } }
+        });
+    }
+</script>
+
+</body>
+</html>
