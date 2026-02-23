@@ -18,11 +18,9 @@
         :root {
             --bg-gradient: radial-gradient(circle at top right, #1b3a4b, #0d1b2a, #050b14);
             --card-bg: #132435;
-            --text-main: #e8d5a5; /* Dorado suave */
-            --accent: #d4af37;    /* Dorado fuerte */
+            --text-main: #e8d5a5; 
+            --accent: #d4af37;    
             --accent-hover: #b5952f;
-            
-            /* Color para el botón LOSS (Verde Bosque/Esmeralda) */
             --loss-bg: #2d6a4f;
             --loss-shadow: rgba(45, 106, 79, 0.6);
             --success: #27ae60;
@@ -33,124 +31,78 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: var(--bg-gradient);
             color: var(--text-main);
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center; 
-            min-height: 100vh;
-            text-align: center;
+            margin: 0; padding: 0; display: flex;
+            justify-content: center; align-items: center; 
+            min-height: 100vh; text-align: center;
         }
 
         .app-container {
-            width: 100%;
-            max-width: 450px;
-            padding: 20px 15px;
-            margin: auto;
-            box-sizing: border-box;
+            width: 100%; max-width: 450px; padding: 20px 15px; margin: auto; box-sizing: border-box;
         }
 
-        /* Vistas */
-        .view { display: none; animation: fadeIn 0.4s ease-in-out; }
+        .view { display: none; animation: fadeIn 0.3s ease-in-out; }
         .view.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Logo y Encabezados */
-        .logo-img {
-            width: 80px;
-            height: 80px;
-            object-fit: contain;
-            margin-bottom: 10px;
-            filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.3));
-        }
+        .logo-img { width: 80px; height: 80px; object-fit: contain; margin-bottom: 10px; filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.3)); }
         h1 { font-size: 24px; color: var(--accent); font-weight: 600; letter-spacing: 1px; margin-bottom: 5px; }
         h2 { font-size: 18px; color: var(--accent); margin-bottom: 15px; border-bottom: 1px solid var(--accent); padding-bottom: 5px;}
         p { font-size: 14px; opacity: 0.9; margin-bottom: 25px; line-height: 1.4;}
 
-        /* Botones del Menú Principal */
-        .menu-list {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            margin-top: 25px;
-        }
-
+        .menu-list { display: flex; flex-direction: column; gap: 15px; margin-top: 25px; }
         .btn-menu {
-            background: var(--card-bg);
-            border: 1px solid rgba(212, 175, 55, 0.4);
-            border-radius: 16px;
-            padding: 20px;
-            color: var(--accent);
-            font-size: 18px;
-            font-weight: 600;
-            cursor: pointer;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-            display: flex;
-            align-items: center;
-            justify-content: flex-start;
-            transition: all 0.3s;
+            background: var(--card-bg); border: 1px solid rgba(212, 175, 55, 0.4); border-radius: 16px; padding: 20px;
+            color: var(--accent); font-size: 18px; font-weight: 600; cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: flex-start; transition: all 0.3s;
         }
         .btn-menu i { font-size: 30px; margin-right: 15px; font-style: normal; }
         .btn-menu:hover, .btn-menu:active { background: rgba(212, 175, 55, 0.1); border-color: var(--accent); }
 
         .btn-full {
-            width: 100%;
-            padding: 15px;
-            margin-bottom: 15px;
-            border: 1px solid var(--accent);
-            border-radius: 12px;
-            background: var(--card-bg);
-            color: var(--accent);
-            font-size: 16px;
-            cursor: pointer;
-            font-weight: bold;
+            width: 100%; padding: 15px; margin-bottom: 15px; border: 1px solid var(--accent); border-radius: 12px;
+            background: var(--card-bg); color: var(--accent); font-size: 16px; cursor: pointer; font-weight: bold;
         }
         .btn-full.primary { background: var(--accent); color: #0d1b2a; }
-        
-        .btn-danger {
-            border-color: rgba(231, 76, 60, 0.5);
-            color: var(--danger);
-            background: rgba(231, 76, 60, 0.05);
-        }
+        .btn-danger { border-color: rgba(231, 76, 60, 0.5); color: var(--danger); background: rgba(231, 76, 60, 0.05); }
 
-        /* BOTÓN LOSS */
         .btn-loss { 
-            background-color: var(--loss-bg); 
-            border: 2px solid var(--accent);
-            color: var(--text-main);
-            font-size: 24px; 
-            font-weight: bold; 
-            padding: 40px; 
-            border-radius: 50%;
-            margin: 30px auto 40px auto; 
-            width: 160px;
-            height: 160px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 0 20px var(--loss-shadow);
-            transition: transform 0.1s;
+            background-color: var(--loss-bg); border: 2px solid var(--accent); color: var(--text-main);
+            font-size: 24px; font-weight: bold; padding: 40px; border-radius: 50%;
+            margin: 30px auto 40px auto; width: 160px; height: 160px; display: flex; align-items: center;
+            justify-content: center; box-shadow: 0 0 20px var(--loss-shadow); transition: transform 0.1s;
         }
         .btn-loss:active { transform: scale(0.95); }
 
-        /* Figuras para Visualización */
         .shape-container { display: flex; justify-content: center; margin: 30px 0; }
         .shape { width: 120px; height: 120px; display: none; }
         .shape.star { background: var(--accent); clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%); }
         .shape.circle { background: #e74c3c; border-radius: 50%; }
         .shape.triangle { background: #3498db; clip-path: polygon(50% 0%, 0% 100%, 100% 100%); }
 
-        /* Cronómetro */
         .timer { font-size: 70px; font-weight: 300; font-variant-numeric: tabular-nums; margin: 10px 0; color: var(--accent); text-shadow: 0 0 10px rgba(212, 175, 55, 0.3); }
         .total-timer { font-size: 16px; color: #a0b2c6; margin-bottom: 20px; display: none; }
 
-        /* Contenedor de Gráficos y Tarjetas */
-        .chart-container { background: var(--card-bg); border: 1px solid rgba(212,175,55,0.2); border-radius: 12px; padding: 10px; margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
-        
+        .chart-container { background: var(--card-bg); border: 1px solid rgba(212,175,55,0.2); border-radius: 12px; padding: 15px 10px; margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
         .history-card { border: 1px solid rgba(212,175,55,0.3); padding: 15px; border-radius: 12px; margin-bottom: 12px; background: var(--card-bg); text-align: left; }
         .history-card h4 { margin: 0 0 8px 0; color: var(--accent); display: flex; justify-content: space-between;}
-        
         .ranking-badge { background: var(--accent); color: #0d1b2a; padding: 2px 8px; border-radius: 10px; font-size: 12px; font-weight: bold; }
+
+        textarea {
+            width: 100%; height: 220px; background: rgba(13, 27, 42, 0.8); color: var(--text-main);
+            border: 1px solid var(--accent); border-radius: 12px; padding: 15px;
+            font-family: inherit; font-size: 15px; resize: none; box-sizing: border-box;
+            margin-bottom: 20px; line-height: 1.5;
+        }
+        textarea:focus { outline: none; box-shadow: 0 0 10px rgba(212,175,55,0.3); }
+        
+        #toast {
+            visibility: hidden; min-width: 250px; background-color: var(--success); color: #fff;
+            text-align: center; border-radius: 8px; padding: 16px; position: fixed; z-index: 1;
+            left: 50%; bottom: 30px; transform: translateX(-50%); font-weight: bold;
+        }
+        #toast.show { visibility: visible; animation: fadein 0.5s, fadeout 0.5s 2.5s; }
+        @keyframes fadein { from { bottom: 0; opacity: 0; } to { bottom: 30px; opacity: 1; } }
+        @keyframes fadeout { from { bottom: 30px; opacity: 1; } to { bottom: 0; opacity: 0; } }
     </style>
 </head>
 <body>
@@ -164,26 +116,22 @@
         <p>Selecciona la disciplina a practicar</p>
         
         <div class="menu-list">
-            <button class="btn-menu" onclick="abrirHub('observador')">
-                <i>👁️</i> El Observador
-            </button>
-            <button class="btn-menu" onclick="abrirHub('visualizacion')">
-                <i>🔺</i> Visualización
-            </button>
-            <button class="btn-menu" onclick="abrirHub('vacio')">
-                <i>🌌</i> Vacío Mental
-            </button>
+            <button class="btn-menu" onclick="abrirHub('observador')"><i>👁️</i> El Observador</button>
+            <button class="btn-menu" onclick="abrirHub('visualizacion')"><i>🔺</i> Visualización</button>
+            <button class="btn-menu" onclick="abrirHub('vacio')"><i>🌌</i> Vacío Mental</button>
         </div>
     </div>
 
     <!-- 2. HUB DEL EJERCICIO -->
     <div id="view-hub" class="view">
-        <img src="ojo-de-ra.png" alt="Ojo de Ra" class="logo-img" style="width: 60px; height: 60px;">
+        <img src="ojo-de-ra.png" alt="Ojo de Ra" class="logo-img" style="width: 50px; height: 50px;">
         <h1 id="hub-title">Nombre Ejercicio</h1>
         <p id="hub-desc">Descripción del ejercicio.</p>
 
-        <button class="btn-full primary" onclick="prepararEjercicio()">INICIAR PRÁCTICA</button>
+        <button class="btn-full primary" onclick="prepararEjercicio()">▶ INICIAR PRÁCTICA</button>
+        <button class="btn-full" onclick="abrirNotas()">📝 NOTAS Y REFLEXIONES</button>
         <button class="btn-full" onclick="mostrarHistorial()">📊 VER PROGRESO</button>
+        
         <button class="btn-full" onclick="cambiarVista('view-menu')" style="border-color: #555; color: #aaa; margin-top: 20px;">Volver al Menú</button>
     </div>
 
@@ -229,41 +177,54 @@
     <div id="view-history" class="view">
         <h2 id="history-title">Progreso</h2>
         
-        <!-- Gráficos -->
-        <div class="chart-container">
-            <canvas id="chartRacha"></canvas>
-        </div>
-        <div class="chart-container">
-            <canvas id="chartLoss"></canvas>
+        <!-- Gráfico Línea de Tiempo de Última Sesión -->
+        <div class="chart-container" id="containerLastSession">
+            <h3 style="font-size: 14px; margin: 0 0 10px 0; color: var(--text-main);">📈 Última Sesión: Frecuencia de Atención</h3>
+            
+            <!-- Contenedor con altura estricta para el ECG -->
+            <div style="position: relative; height: 80px; width: 100%;">
+                <canvas id="chartLastSession"></canvas>
+            </div>
+            
+            <p id="no-loss-msg" style="display:none; font-size: 13px; font-weight: bold; margin-top: 5px;"></p>
         </div>
 
-        <!-- Ranking Top Rachas -->
-        <h2 style="margin-top:25px; font-size: 16px;">🏆 Top Mejores Sesiones</h2>
+        <!-- Gráficos Históricos -->
+        <div class="chart-container"><canvas id="chartRacha"></canvas></div>
+        <div class="chart-container"><canvas id="chartLoss"></canvas></div>
+
+        <!-- Historial en Texto -->
+        <h2 style="margin-top:25px; font-size: 16px;">🏆 Mejores Sesiones</h2>
         <div id="ranking-list"></div>
-
-        <!-- Historial Reciente -->
         <h2 style="margin-top:25px; font-size: 16px;">📅 Sesiones Recientes</h2>
         <div id="history-list" style="max-height: 250px; overflow-y: auto; margin-bottom: 20px;"></div>
         
-        <!-- Botones de Control -->
         <button class="btn-full" onclick="abrirHub(tipoActual)">Volver al Ejercicio</button>
-        <!-- BOTÓN DE BORRAR REGISTROS -->
         <button class="btn-full btn-danger" onclick="borrarRegistros()">🗑️ Reiniciar Historial</button>
+    </div>
+
+    <!-- 7. VISTA DE NOTAS -->
+    <div id="view-notes" class="view">
+        <h2 id="notes-title">Notas</h2>
+        <p style="font-size: 13px; margin-bottom: 10px;">Escribe tus sensaciones, reflexiones o distracciones recurrentes para este ejercicio.</p>
+        <textarea id="notes-text" placeholder="Hoy noté que mi mente se iba a..."></textarea>
+        
+        <button class="btn-full primary" onclick="guardarNotas()">GUARDAR NOTAS</button>
+        <button class="btn-full" onclick="cambiarVista('view-hub')" style="border-color: #555; color: #aaa;">Cancelar</button>
     </div>
 
 </div>
 
+<!-- Mensaje Toast Flotante -->
+<div id="toast">✅ Guardado correctamente</div>
+
 <script>
-    // Registro PWA
     if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('sw.js').catch(err => console.warn(err));
-        });
+        window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js').catch(err => console.warn(err)); });
     }
 
-    // --- VARIABLES ---
     const infoEjercicios = {
-        'observador': { title: 'El Observador', desc: 'Siéntate cómodo. Cierra los ojos. Deja pasar tus pensamientos como vehículos en una carretera. No te involucres en su historia.' },
+        'observador': { title: 'El Observador', desc: 'Cierra los ojos. Deja pasar tus pensamientos como vehículos en una carretera. No te involucres en su historia.' },
         'visualizacion': { title: 'Visualización', desc: 'Mantén la mirada y atención fijas en la figura geométrica en pantalla sin distraerte.' },
         'vacio': { title: 'Vacío Mental', desc: 'Mantén la mente en blanco total. Al presionar LOSS, tu racha actual se guardará y el cronómetro volverá a cero.' }
     };
@@ -274,15 +235,15 @@
     let segTotalesVacio = 0;
     let registroLoss = [];
     let vacioSegmentos = [];
+    let timelineLossTemp = []; 
     let metaSegundos = 600; 
     let fechaInicioObj = null;
-    let rachaChartInstance = null;
-    let lossChartInstance = null;
-    
-    // Variable para controlar la pantalla encendida
     let wakeLock = null;
 
-    // --- UTILIDADES ---
+    let rachaChartInstance = null;
+    let lossChartInstance = null;
+    let lastSessionChartInstance = null;
+
     function cambiarVista(idVista) {
         document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
         document.getElementById(idVista).classList.add('active');
@@ -294,39 +255,42 @@
         return `${m}:${s}`;
     }
 
-    // --- FUNCIONES WAKE LOCK (Mantener pantalla encendida) ---
+    function mostrarToast() {
+        let toast = document.getElementById("toast");
+        toast.className = "show";
+        setTimeout(function(){ toast.className = toast.className.replace("show", ""); }, 3000);
+    }
+
     async function solicitarWakeLock() {
-        try {
-            if ('wakeLock' in navigator) {
-                wakeLock = await navigator.wakeLock.request('screen');
-                console.log('Pantalla mantenida encendida.');
-            }
-        } catch (err) {
-            console.warn(`Error WakeLock: ${err.name}, ${err.message}`);
-        }
+        try { if ('wakeLock' in navigator) wakeLock = await navigator.wakeLock.request('screen'); } 
+        catch (err) { console.warn(err); }
     }
-
     async function liberarWakeLock() {
-        if (wakeLock !== null) {
-            await wakeLock.release();
-            wakeLock = null;
-            console.log('Pantalla liberada.');
-        }
+        if (wakeLock !== null) { await wakeLock.release(); wakeLock = null; }
     }
-
-    // Si el usuario cambia de app temporalmente y vuelve, el celular quita el WakeLock por seguridad. 
-    // Este código lo vuelve a pedir si el ejercicio sigue activo.
     document.addEventListener('visibilitychange', async () => {
-        if (wakeLock !== null && document.visibilityState === 'visible') {
-            solicitarWakeLock();
-        }
+        if (wakeLock !== null && document.visibilityState === 'visible') solicitarWakeLock();
     });
 
-    // --- FLUJO ---
     function abrirHub(tipo) {
         tipoActual = tipo;
         document.getElementById('hub-title').innerText = infoEjercicios[tipo].title;
         document.getElementById('hub-desc').innerText = infoEjercicios[tipo].desc;
+        cambiarVista('view-hub');
+    }
+
+    function abrirNotas() {
+        document.getElementById('notes-title').innerText = "Diario: " + infoEjercicios[tipoActual].title;
+        let notasGuardadas = JSON.parse(localStorage.getItem('mindfulness_notes') || '{}');
+        document.getElementById('notes-text').value = notasGuardadas[tipoActual] || '';
+        cambiarVista('view-notes');
+    }
+
+    function guardarNotas() {
+        let notasGuardadas = JSON.parse(localStorage.getItem('mindfulness_notes') || '{}');
+        notasGuardadas[tipoActual] = document.getElementById('notes-text').value;
+        localStorage.setItem('mindfulness_notes', JSON.stringify(notasGuardadas));
+        mostrarToast();
         cambiarVista('view-hub');
     }
 
@@ -337,22 +301,20 @@
 
     function iniciarEjercicio(figura) {
         segTranscurridos = 0; segTotalesVacio = 0;
-        registroLoss = []; vacioSegmentos = [];
+        registroLoss = []; vacioSegmentos = []; timelineLossTemp = [];
         clearInterval(temporizador);
-        liberarWakeLock(); // Por si acaso aseguramos que esté apagado antes de iniciar
+        liberarWakeLock();
 
         document.getElementById('ex-title').innerText = infoEjercicios[tipoActual].title;
         
         let shapeDiv = document.getElementById('ex-shape');
-        shapeDiv.className = 'shape';
-        shapeDiv.style.display = 'none';
+        shapeDiv.className = 'shape'; shapeDiv.style.display = 'none';
         if (tipoActual === 'visualizacion' && figura) { shapeDiv.classList.add(figura); shapeDiv.style.display = 'block'; }
 
         document.getElementById('main-timer').innerText = "00:00";
         let totalTimerUI = document.getElementById('total-timer');
         if (tipoActual === 'vacio') {
-            totalTimerUI.style.display = 'block';
-            totalTimerUI.innerText = "Tiempo Invertido: 00:00";
+            totalTimerUI.style.display = 'block'; totalTimerUI.innerText = "Tiempo Invertido: 00:00";
         } else totalTimerUI.style.display = 'none';
 
         document.getElementById('controls-start').style.display = 'block';
@@ -364,8 +326,6 @@
         document.getElementById('controls-start').style.display = 'none';
         document.getElementById('controls-active').style.display = 'block';
         fechaInicioObj = new Date();
-
-        // Solicitar que la pantalla NO se apague
         solicitarWakeLock();
 
         temporizador = setInterval(() => {
@@ -380,6 +340,8 @@
     }
 
     function registrarLoss() {
+        timelineLossTemp.push(tipoActual === 'vacio' ? segTotalesVacio : segTranscurridos);
+
         if (tipoActual === 'vacio') {
             vacioSegmentos.push(segTranscurridos);
             segTranscurridos = 0;
@@ -391,8 +353,6 @@
 
     function finalizarEjercicio(metaAlcanzada) {
         clearInterval(temporizador);
-        
-        // El ejercicio terminó, permitimos que la pantalla vuelva a apagarse normalmente
         liberarWakeLock();
 
         let intervalos = [], rachaMasLarga = 0;
@@ -423,6 +383,7 @@
             duracionTotal: duracionTotalCalculada,
             cantidadLoss: vecesLoss,
             rachaMaxima: rachaMasLarga,
+            timelineLoss: timelineLossTemp, 
             exito: logroExitoso,
             timestamp: fechaInicioObj.getTime()
         };
@@ -435,18 +396,17 @@
     }
 
     function mostrarResumen(registro) {
-        let exitoHtml = registro.exito ? `<h3 style="color:var(--success)">🏆 ¡Meta Cumplida! 10 Minutos.</h3>` : `<h3>Sesión Terminada</h3>`;
+        let exitoHtml = registro.exito ? `<h3 style="color:var(--success)">🏆 ¡Meta Cumplida!</h3>` : `<h3>Sesión Terminada</h3>`;
         document.getElementById('summary-content').innerHTML = `
             ${exitoHtml}
             <p><strong>Día:</strong> ${registro.fecha} a las ${registro.horaInicio}</p>
             <p><strong>Duración Total:</strong> ${formatoTiempo(registro.duracionTotal)}</p>
             <p><strong>Veces Loss:</strong> ${registro.cantidadLoss}</p>
-            <p><strong>Mejor Racha de la sesión:</strong> <span style="color:var(--accent)">${formatoTiempo(registro.rachaMaxima)}</span></p>
+            <p><strong>Mejor Racha:</strong> <span style="color:var(--accent)">${formatoTiempo(registro.rachaMaxima)}</span></p>
         `;
         cambiarVista('view-summary');
     }
 
-    // --- HISTORIAL Y GRÁFICOS ---
     function mostrarHistorial() {
         document.getElementById('history-title').innerText = "Progreso: " + infoEjercicios[tipoActual].title;
         let historialGlobal = JSON.parse(localStorage.getItem('mindfulness_data') || '[]');
@@ -457,46 +417,111 @@
         cambiarVista('view-history');
     }
 
-    function generarListas(datos) {
-        let contenedorRanking = document.getElementById('ranking-list');
-        let contenedorRecientes = document.getElementById('history-list');
-
-        if (datos.length === 0) {
-            contenedorRanking.innerHTML = "<p>Sin datos aún.</p>";
-            contenedorRecientes.innerHTML = "<p>No hay sesiones registradas.</p>";
-            return;
-        }
-
-        let ranking = [...datos].sort((a, b) => b.rachaMaxima - a.rachaMaxima).slice(0, 3);
-        contenedorRanking.innerHTML = ranking.map((reg, index) => `
-            <div class="history-card" style="border-color: var(--success);">
-                <h4><span>#${index + 1} Racha: ${formatoTiempo(reg.rachaMaxima)}</span> <span class="ranking-badge">${reg.exito ? '🏆 Éxito' : ''}</span></h4>
-                <p style="font-size:13px; color:#ccc;">Logrado el: ${reg.fecha} (${reg.horaInicio})</p>
-            </div>
-        `).join('');
-
-        let recientes = [...datos].sort((a, b) => b.timestamp - a.timestamp);
-        contenedorRecientes.innerHTML = recientes.map(reg => `
-            <div class="history-card">
-                <h4>${reg.fecha} - ${reg.horaInicio} ${reg.exito ? '🏆' : ''}</h4>
-                <p>Losses: ${reg.cantidadLoss} | Racha Sesión: ${formatoTiempo(reg.rachaMaxima)}</p>
-            </div>
-        `).join('');
-    }
-
     function dibujarGraficos(datos) {
         if(rachaChartInstance) rachaChartInstance.destroy();
         if(lossChartInstance) lossChartInstance.destroy();
+        if(lastSessionChartInstance) lastSessionChartInstance.destroy();
 
-        if (datos.length === 0) return;
+        if (datos.length === 0) {
+            document.getElementById('containerLastSession').style.display = 'none';
+            return;
+        }
 
+        Chart.defaults.color = '#e8d5a5';
+        Chart.defaults.borderColor = 'rgba(212, 175, 55, 0.2)';
+
+        // 1. GRÁFICO ECG (ÚLTIMA SESIÓN)
+        document.getElementById('containerLastSession').style.display = 'block';
+        let latestSession = [...datos].sort((a,b) => b.timestamp - a.timestamp)[0]; 
+        
+        let msgNoLoss = document.getElementById('no-loss-msg');
+        
+        if (latestSession.cantidadLoss === 0) {
+            msgNoLoss.innerHTML = "¡Sesión perfecta! Ningún loss registrado.";
+            msgNoLoss.style.color = "var(--success)";
+            msgNoLoss.style.display = 'block';
+            document.getElementById('chartLastSession').parentElement.style.display = 'none';
+        } 
+        else if (latestSession.cantidadLoss > 0 && (!latestSession.timelineLoss || latestSession.timelineLoss.length === 0)) {
+            msgNoLoss.innerHTML = `⚠️ Tuviste ${latestSession.cantidadLoss} losses, pero esta sesión es antigua y no tiene datos para el ECG.`;
+            msgNoLoss.style.color = "#aaa";
+            msgNoLoss.style.display = 'block';
+            document.getElementById('chartLastSession').parentElement.style.display = 'none';
+        } 
+        else {
+            msgNoLoss.style.display = 'none';
+            document.getElementById('chartLastSession').parentElement.style.display = 'block';
+            
+            // --- LÓGICA DE ELECTROCARDIOGRAMA ---
+            // Creamos una línea que va por el suelo (y=0) y sube de golpe a y=1 solo en los segundos de loss
+            let ecgData = [];
+            ecgData.push({ x: 0, y: 0 }); // Inicio
+            
+            latestSession.timelineLoss.forEach(sec => {
+                ecgData.push({ x: sec - 0.001, y: 0 }); // Justo antes del pico, línea en el piso
+                ecgData.push({ x: sec, y: 1 });         // El Pico del ECG (el loss)
+                ecgData.push({ x: sec + 0.001, y: 0 }); // Justo después, vuelve al piso inmediatamente
+            });
+
+            ecgData.push({ x: latestSession.duracionTotal, y: 0 }); // Final de la sesión
+            
+            // Nos aseguramos de ordenarlos por tiempo para que la línea se dibuje de izquierda a derecha sin cruzarse
+            ecgData.sort((a, b) => a.x - b.x);
+
+            let ctxLast = document.getElementById('chartLastSession').getContext('2d');
+            lastSessionChartInstance = new Chart(ctxLast, {
+                type: 'line', // Cambiado a Linea
+                data: {
+                    datasets: [{
+                        label: 'Desconcentración',
+                        data: ecgData,
+                        borderColor: '#e74c3c', // Rojo vivo estilo ECG
+                        borderWidth: 2,
+                        backgroundColor: '#e74c3c',
+                        tension: 0, // Lineas completamente rectas, sin curvas suaves
+                        pointRadius: function(context) {
+                            // Dibuja el punto rojo visible SOLO en la punta del pico (y == 1)
+                            return context.raw && context.raw.y === 1 ? 5 : 0;
+                        },
+                        pointHoverRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { 
+                        legend: { display: false },
+                        tooltip: {
+                            filter: function(tooltipItem) {
+                                // Solo mostrar tooltip si el usuario toca la punta del pico
+                                return tooltipItem.raw.y === 1;
+                            },
+                            callbacks: {
+                                title: function() { return null; }, // Ocultar titulo redundante
+                                label: function(ctx) { return '💥 Loss a los ' + formatoTiempo(ctx.raw.x); }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: { 
+                            type: 'linear', min: 0, max: latestSession.duracionTotal,
+                            ticks: { callback: function(value) { return formatoTiempo(value); }, maxTicksLimit: 6 },
+                            grid: { display: false } // Sin cuadricula vertical
+                        },
+                        y: { 
+                            display: false, // Ocultar valores del eje Y
+                            min: 0, max: 1.5 // Dejar espacio arriba del pico para que no se corte
+                        } 
+                    }
+                }
+            });
+        }
+
+        // 2. GRÁFICOS HISTÓRICOS GLOBALES
         let datosGrafico = [...datos].sort((a,b) => a.timestamp - b.timestamp).slice(-15);
         let labels = datosGrafico.map(h => h.fecha.substring(0,5));
         let rachaData = datosGrafico.map(h => (h.rachaMaxima / 60).toFixed(2));
         let lossData = datosGrafico.map(h => h.cantidadLoss);
-
-        Chart.defaults.color = '#e8d5a5';
-        Chart.defaults.borderColor = 'rgba(212, 175, 55, 0.2)';
 
         let ctxRacha = document.getElementById('chartRacha').getContext('2d');
         rachaChartInstance = new Chart(ctxRacha, {
@@ -513,15 +538,35 @@
         });
     }
 
-    // --- BORRAR REGISTROS ---
+    function generarListas(datos) {
+        let contRanking = document.getElementById('ranking-list');
+        let contRecientes = document.getElementById('history-list');
+
+        if (datos.length === 0) {
+            contRanking.innerHTML = "<p>Sin datos aún.</p>"; contRecientes.innerHTML = "<p>No hay sesiones registradas.</p>"; return;
+        }
+
+        let ranking = [...datos].sort((a, b) => b.rachaMaxima - a.rachaMaxima).slice(0, 3);
+        contRanking.innerHTML = ranking.map((reg, index) => `
+            <div class="history-card" style="border-color: var(--success);">
+                <h4><span>#${index + 1} Racha: ${formatoTiempo(reg.rachaMaxima)}</span> <span class="ranking-badge">${reg.exito ? '🏆 Éxito' : ''}</span></h4>
+                <p style="font-size:13px; color:#ccc;">Logrado el: ${reg.fecha} (${reg.horaInicio})</p>
+            </div>
+        `).join('');
+
+        let recientes = [...datos].sort((a, b) => b.timestamp - a.timestamp);
+        contRecientes.innerHTML = recientes.map(reg => `
+            <div class="history-card">
+                <h4>${reg.fecha} - ${reg.horaInicio} ${reg.exito ? '🏆' : ''}</h4>
+                <p>Losses: ${reg.cantidadLoss} | Racha Sesión: ${formatoTiempo(reg.rachaMaxima)}</p>
+            </div>
+        `).join('');
+    }
+
     function borrarRegistros() {
-        let nombreEjercicio = infoEjercicios[tipoActual].title;
-        if (confirm(`¿Estás seguro de que quieres borrar TODOS tus progresos de "${nombreEjercicio}"?\n\nEsta acción no se puede deshacer.`)) {
-            let historialGlobal = JSON.parse(localStorage.getItem('mindfulness_data') || '[]');
-            let historialLimpio = historialGlobal.filter(h => h.tipo !== tipoActual);
-            
+        if (confirm(`¿Borrar TODOS tus progresos de "${infoEjercicios[tipoActual].title}"?`)) {
+            let historialLimpio = JSON.parse(localStorage.getItem('mindfulness_data') || '[]').filter(h => h.tipo !== tipoActual);
             localStorage.setItem('mindfulness_data', JSON.stringify(historialLimpio));
-            
             mostrarHistorial();
         }
     }
