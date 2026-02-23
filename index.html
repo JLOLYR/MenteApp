@@ -177,12 +177,11 @@
     <div id="view-history" class="view">
         <h2 id="history-title">Progreso</h2>
         
-        <!-- Gráfico Línea de Tiempo de Última Sesión -->
+        <!-- Gráfico de la Última Sesión (Dinámico) -->
         <div class="chart-container" id="containerLastSession">
-            <h3 style="font-size: 14px; margin: 0 0 10px 0; color: var(--text-main);">📈 Última Sesión: Frecuencia de Atención</h3>
+            <h3 id="last-session-title" style="font-size: 14px; margin: 0 0 10px 0; color: var(--text-main);">📈 Última Sesión</h3>
             
-            <!-- Contenedor con altura estricta para el ECG -->
-            <div style="position: relative; height: 80px; width: 100%;">
+            <div id="canvas-wrapper" style="position: relative; height: 80px; width: 100%;">
                 <canvas id="chartLastSession"></canvas>
             </div>
             
@@ -422,99 +421,156 @@
         if(lossChartInstance) lossChartInstance.destroy();
         if(lastSessionChartInstance) lastSessionChartInstance.destroy();
 
+        let chartContainer = document.getElementById('containerLastSession');
+        let canvasWrapper = document.getElementById('canvas-wrapper');
+        let titleEl = document.getElementById('last-session-title');
+
         if (datos.length === 0) {
-            document.getElementById('containerLastSession').style.display = 'none';
+            chartContainer.style.display = 'none';
             return;
         }
 
         Chart.defaults.color = '#e8d5a5';
         Chart.defaults.borderColor = 'rgba(212, 175, 55, 0.2)';
 
-        // 1. GRÁFICO ECG (ÚLTIMA SESIÓN)
-        document.getElementById('containerLastSession').style.display = 'block';
+        // 1. GRÁFICO (ÚLTIMA SESIÓN)
+        chartContainer.style.display = 'block';
         let latestSession = [...datos].sort((a,b) => b.timestamp - a.timestamp)[0]; 
-        
         let msgNoLoss = document.getElementById('no-loss-msg');
         
         if (latestSession.cantidadLoss === 0) {
+            titleEl.innerHTML = '📈 Última Sesión';
             msgNoLoss.innerHTML = "¡Sesión perfecta! Ningún loss registrado.";
             msgNoLoss.style.color = "var(--success)";
             msgNoLoss.style.display = 'block';
-            document.getElementById('chartLastSession').parentElement.style.display = 'none';
+            canvasWrapper.style.display = 'none';
         } 
         else if (latestSession.cantidadLoss > 0 && (!latestSession.timelineLoss || latestSession.timelineLoss.length === 0)) {
-            msgNoLoss.innerHTML = `⚠️ Tuviste ${latestSession.cantidadLoss} losses, pero esta sesión es antigua y no tiene datos para el ECG.`;
+            titleEl.innerHTML = '📈 Última Sesión';
+            msgNoLoss.innerHTML = `⚠️ Tuviste ${latestSession.cantidadLoss} losses, pero esta sesión es antigua y no tiene datos gráficos.`;
             msgNoLoss.style.color = "#aaa";
             msgNoLoss.style.display = 'block';
-            document.getElementById('chartLastSession').parentElement.style.display = 'none';
+            canvasWrapper.style.display = 'none';
         } 
         else {
             msgNoLoss.style.display = 'none';
-            document.getElementById('chartLastSession').parentElement.style.display = 'block';
+            canvasWrapper.style.display = 'block';
             
-            // --- LÓGICA DE ELECTROCARDIOGRAMA ---
-            // Creamos una línea que va por el suelo (y=0) y sube de golpe a y=1 solo en los segundos de loss
-            let ecgData = [];
-            ecgData.push({ x: 0, y: 0 }); // Inicio
-            
-            latestSession.timelineLoss.forEach(sec => {
-                ecgData.push({ x: sec - 0.001, y: 0 }); // Justo antes del pico, línea en el piso
-                ecgData.push({ x: sec, y: 1 });         // El Pico del ECG (el loss)
-                ecgData.push({ x: sec + 0.001, y: 0 }); // Justo después, vuelve al piso inmediatamente
-            });
-
-            ecgData.push({ x: latestSession.duracionTotal, y: 0 }); // Final de la sesión
-            
-            // Nos aseguramos de ordenarlos por tiempo para que la línea se dibuje de izquierda a derecha sin cruzarse
-            ecgData.sort((a, b) => a.x - b.x);
-
             let ctxLast = document.getElementById('chartLastSession').getContext('2d');
-            lastSessionChartInstance = new Chart(ctxLast, {
-                type: 'line', // Cambiado a Linea
-                data: {
-                    datasets: [{
-                        label: 'Desconcentración',
-                        data: ecgData,
-                        borderColor: '#e74c3c', // Rojo vivo estilo ECG
-                        borderWidth: 2,
-                        backgroundColor: '#e74c3c',
-                        tension: 0, // Lineas completamente rectas, sin curvas suaves
-                        pointRadius: function(context) {
-                            // Dibuja el punto rojo visible SOLO en la punta del pico (y == 1)
-                            return context.raw && context.raw.y === 1 ? 5 : 0;
-                        },
-                        pointHoverRadius: 8
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { 
-                        legend: { display: false },
-                        tooltip: {
-                            filter: function(tooltipItem) {
-                                // Solo mostrar tooltip si el usuario toca la punta del pico
-                                return tooltipItem.raw.y === 1;
-                            },
-                            callbacks: {
-                                title: function() { return null; }, // Ocultar titulo redundante
-                                label: function(ctx) { return '💥 Loss a los ' + formatoTiempo(ctx.raw.x); }
-                            }
-                        }
+
+            if (latestSession.tipo === 'vacio') {
+                // --- LÓGICA DE BARRAS (SÓLO PARA VACÍO MENTAL) ---
+                titleEl.innerHTML = '📊 Última Sesión: Rachas Acumuladas';
+                canvasWrapper.style.height = '180px'; // Aumentamos altura para ver las barras cómodamente
+                
+                let labelsVacio = [];
+                let dataVacio = [];
+                let prev = 0;
+                
+                // Calculamos cuánto tiempo duró cada racha restándole el loss anterior
+                latestSession.timelineLoss.forEach((sec, index) => {
+                    // Creamos etiqueta de 2 líneas: "Loss 1" y debajo "(02:15)"
+                    labelsVacio.push(['Loss ' + (index+1), '(' + formatoTiempo(sec) + ')']);
+                    dataVacio.push(sec - prev);
+                    prev = sec;
+                });
+
+                lastSessionChartInstance = new Chart(ctxLast, {
+                    type: 'bar',
+                    data: {
+                        labels: labelsVacio,
+                        datasets: [{
+                            label: 'Duración de la racha',
+                            data: dataVacio,
+                            backgroundColor: '#d4af37', // Dorado para celebrar el tiempo logrado
+                            borderRadius: 4
+                        }]
                     },
-                    scales: {
-                        x: { 
-                            type: 'linear', min: 0, max: latestSession.duracionTotal,
-                            ticks: { callback: function(value) { return formatoTiempo(value); }, maxTicksLimit: 6 },
-                            grid: { display: false } // Sin cuadricula vertical
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { 
+                            legend: { display: false },
+                            tooltip: {
+                                callbacks: {
+                                    title: function(ctx) { return 'Pérdida a los ' + ctx[0].label.replace(',',' '); },
+                                    label: function(ctx) { return 'Racha acumulada: ' + formatoTiempo(ctx.raw); }
+                                }
+                            }
                         },
-                        y: { 
-                            display: false, // Ocultar valores del eje Y
-                            min: 0, max: 1.5 // Dejar espacio arriba del pico para que no se corte
-                        } 
+                        scales: {
+                            x: { 
+                                ticks: { color: '#e8d5a5', font: {size: 11} },
+                                grid: { display: false }
+                            },
+                            y: { 
+                                beginAtZero: true,
+                                ticks: { 
+                                    color: '#a0b2c6',
+                                    callback: function(value) { return formatoTiempo(value); },
+                                    maxTicksLimit: 5
+                                },
+                                grid: { color: 'rgba(212, 175, 55, 0.1)' }
+                            } 
+                        }
                     }
-                }
-            });
+                });
+
+            } else {
+                // --- LÓGICA DE ECG (PARA OBSERVADOR Y VISUALIZACIÓN) ---
+                titleEl.innerHTML = '📈 Última Sesión: Electrocardiograma de Atención';
+                canvasWrapper.style.height = '80px'; // Altura pequeña elegante
+
+                let ecgData = [];
+                ecgData.push({ x: 0, y: 0 }); 
+                
+                latestSession.timelineLoss.forEach(sec => {
+                    ecgData.push({ x: sec - 0.001, y: 0 });
+                    ecgData.push({ x: sec, y: 1 });        
+                    ecgData.push({ x: sec + 0.001, y: 0 });
+                });
+                ecgData.push({ x: latestSession.duracionTotal, y: 0 }); 
+                
+                ecgData.sort((a, b) => a.x - b.x);
+
+                lastSessionChartInstance = new Chart(ctxLast, {
+                    type: 'line',
+                    data: {
+                        datasets: [{
+                            label: 'Desconcentración',
+                            data: ecgData,
+                            borderColor: '#e74c3c',
+                            borderWidth: 2,
+                            backgroundColor: '#e74c3c',
+                            tension: 0, 
+                            pointRadius: function(context) { return context.raw && context.raw.y === 1 ? 5 : 0; },
+                            pointHoverRadius: 8
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { 
+                            legend: { display: false },
+                            tooltip: {
+                                filter: function(tooltipItem) { return tooltipItem.raw.y === 1; },
+                                callbacks: {
+                                    title: function() { return null; },
+                                    label: function(ctx) { return '💥 Loss a los ' + formatoTiempo(ctx.raw.x); }
+                                }
+                            }
+                        },
+                        scales: {
+                            x: { 
+                                type: 'linear', min: 0, max: latestSession.duracionTotal,
+                                ticks: { callback: function(value) { return formatoTiempo(value); }, maxTicksLimit: 6 },
+                                grid: { display: false } 
+                            },
+                            y: { display: false, min: 0, max: 1.5 } 
+                        }
+                    }
+                });
+            }
         }
 
         // 2. GRÁFICOS HISTÓRICOS GLOBALES
